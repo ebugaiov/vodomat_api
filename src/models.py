@@ -3,6 +3,19 @@ from sqlalchemy import Integer, Float, String, Boolean, DateTime, ForeignKey
 from db.database import database_metadata
 from sqlalchemy.dialects.mysql import TINYINT
 
+user = Table(
+    'user', database_metadata,
+
+    Column('id', Integer, primary_key=True),
+    Column('username', String(64), nullable=False, unique=True),
+    Column('last_name', String(64)),
+    Column('first_name', String(64)),
+    Column('email', String(120)),
+    Column('password_hash', String(128), nullable=False),
+    Column('permission', String(64), nullable=False),
+    Column('city', String(64)),
+    Column('last_visit', DateTime),
+)
 
 city = Table(
     'city', database_metadata,

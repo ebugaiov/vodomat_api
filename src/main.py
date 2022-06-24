@@ -8,9 +8,9 @@ from fastapi.responses import ORJSONResponse
 
 from core import config
 from core.logger import LOGGING
-from db import redis
 from db import database
 
+import security
 from api.v3 import status
 
 app = FastAPI(
@@ -25,15 +25,14 @@ app = FastAPI(
 @app.on_event('startup')
 async def startup():
     await database.database.connect()
-    redis.redis = await aioredis.from_url(redis.REDIS_URL, encoding='utf-8', decode_responses=True)
 
 
 @app.on_event('shutdown')
 async def shutdown():
     await database.database.disconnect()
-    await redis.redis.close()
 
 app.include_router(status.router, prefix='/v3/status', tags=['status'])
+app.include_router(security.router, prefix='', tags=['security'])
 
 if __name__ == '__main__':
     uvicorn.run(
