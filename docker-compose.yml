@@ -1,0 +1,10 @@
+version: '3.7'
+services:
+  app:
+    build: .
+    command: uvicorn main:app --proxy-headers --host 0.0.0.0 --port 7000
+    env_file:
+      - .env
+    image: vodomat_api
+    network_mode: "host"
+    restart: "on-failure"
