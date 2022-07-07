@@ -4,6 +4,7 @@ from typing import List, Optional
 import datetime
 
 from services.status import StatusService, get_status_service
+from security import User, get_current_user
 
 router = APIRouter()
 
@@ -31,6 +32,7 @@ class Status(BaseModel):
 
 
 @router.get('/', response_model=List[Status])
-async def all_statuses(status_service: StatusService = Depends(get_status_service)) -> List[Status]:
+async def all_statuses(status_service: StatusService = Depends(get_status_service),
+                       current_user: User = Depends(get_current_user)) -> List[Status]:
     statuses = await status_service.get_all()
     return statuses

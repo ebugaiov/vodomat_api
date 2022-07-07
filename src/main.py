@@ -1,7 +1,5 @@
 import logging
 
-import aioredis
-import databases
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
@@ -16,7 +14,7 @@ from api.v3 import status
 app = FastAPI(
     title=config.PROJECT_NAME,
     version=config.API_VERSION,
-    docs_url='/api/openapi',
+    docs_url='/api/docs',
     openapi_url='/api/openapi.json',
     default_response_class=ORJSONResponse,
 )

@@ -17,7 +17,9 @@ class StatusService:
                   .join(street, avtomat.c.street_id == street.c.id, isouter=True) \
                   .join(city, street.c.city_id == city.c.id, isouter=True) \
                   .join(route, avtomat.c.route_id == route.c.id, isouter=True)
-        query = select([status, city.c.city, street.c.street, avtomat.c.house, route.c.car_number, route.c.name.label('route_name')]).select_from(j)
+        query = select([status, city.c.city, street.c.street,
+                        avtomat.c.house, route.c.car_number,
+                        route.c.name.label('route_name')]).select_from(j)
         return await self.database.fetch_all(query)
 
 
