@@ -1,28 +1,39 @@
 from functools import lru_cache
 
-from fastapi import Depends
-from databases import Database
-from sqlalchemy.sql import select
+from fastapi import Depends, HTTPException, status
+from sqlalchemy import select
+from sqlalchemy.orm import joinedload
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from db.database import get_database
-from models import city, street, avtomat, route, status
+from .base import BaseService
+from models import Status
+from models import Avtomat
+
+from db import get_async_session_server
 
 
-class StatusService:
-    def __init__(self, database: Database):
-        self.database = database
+class StatusService(BaseService):
 
-    async def get_all(self):
-        j = status.join(avtomat, status.c.avtomat_number == avtomat.c.avtomat_number) \
-                  .join(street, avtomat.c.street_id == street.c.id, isouter=True) \
-                  .join(city, street.c.city_id == city.c.id, isouter=True) \
-                  .join(route, avtomat.c.route_id == route.c.id, isouter=True)
-        query = select([status, city.c.city, street.c.street,
-                        avtomat.c.house, route.c.car_number,
-                        route.c.name.label('route_name')]).select_from(j)
-        return await self.database.fetch_all(query)
+    async def get_all(self, *args) -> list[Status]:
+        order_attribute, order_direction = args
+        select_query = select(Status)\
+            .join(Status.avtomat)\
+            .options(joinedload(Status.avtomat)
+                     .options(joinedload(Avtomat.route), joinedload(Avtomat.street)))
+        selected_data = (await self.db_session.execute(select_query)).scalars().all()
+        ordered_data = self.get_ordered_data(selected_data, order_attribute, order_direction)
+        return ordered_data
+
+    async def get_item_by_avtomat_number(self, avtomat_number: int) -> Status:
+        query = select(Status)\
+            .options(joinedload(Status.avtomat).options(joinedload(Avtomat.route), joinedload(Avtomat.street)))\
+            .where(Status.avtomat_number == avtomat_number)
+        data = (await self.db_session.execute(query)).scalars().first()
+        if data is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        return data
 
 
 @lru_cache
-def get_status_service(database: Database = Depends(get_database)) -> StatusService:
-    return StatusService(database)
+def get_status_service(db_session: AsyncSession = Depends(get_async_session_server)) -> StatusService:
+    return StatusService(db_session)

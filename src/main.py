@@ -7,31 +7,23 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from core import config
 from core.logger import LOGGING
-from db import database
 
 import security
-from api.v3 import status
+import api
 
 app = FastAPI(
     title=config.PROJECT_NAME,
     version=config.API_VERSION,
-    docs_url='/api/docs',
-    openapi_url='/api/openapi.json',
+    docs_url='/docs',
+    openapi_url='/openapi.json',
     default_response_class=ORJSONResponse,
 )
 
-
-@app.on_event('startup')
-async def startup():
-    await database.database.connect()
-
-
-@app.on_event('shutdown')
-async def shutdown():
-    await database.database.disconnect()
-
-app.include_router(status.router, prefix='/v3/status', tags=['status'])
-app.include_router(security.router, prefix='', tags=['security'])
+app.include_router(security.router)
+app.include_router(api.city_router)
+app.include_router(api.street_router)
+app.include_router(api.avtomat_router)
+app.include_router(api.status_router)
 
 app.add_middleware(
     CORSMiddleware,

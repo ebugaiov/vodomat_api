@@ -6,43 +6,28 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-from pydantic import BaseModel
-
 from core import config
 
-from services.user import UserService, get_user_service
+from schemas import TokenSchema, UserSchema
+from services import UserService, get_user_service
+from models import User
 
-router = APIRouter()
+router = APIRouter(prefix='/security', tags=['security'])
+
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/token')
-
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-
-class User(BaseModel):
-    username: str
-    last_name: Optional[str]
-    first_name: Optional[str]
-    email: Optional[str]
-    password_hash: str
-    permission: str
-    city: Optional[str]
-    last_visit: Optional[datetime]
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/security/token')
 
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
 
-async def authenticate_user(user_service: UserService, username: str, password: str):
+async def authenticate_user(user_service: UserService, username: str, password: str) -> Optional[User]:
     user = await user_service.get_by_username(username)
     if not user:
-        return False
+        return
     if not verify_password(password, user.password_hash):
-        return False
+        return
     return user
 
 
@@ -57,8 +42,9 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     return encoded_jwt
 
 
+# Security dependency
 async def get_current_user(token: str = Depends(oauth2_scheme),
-                           user_service: UserService = Depends(get_user_service)) -> User:
+                           user_service: UserService = Depends(get_user_service)) -> UserSchema:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail='Could not validate credentials',
@@ -66,15 +52,18 @@ async def get_current_user(token: str = Depends(oauth2_scheme),
     )
     try:
         payload = jwt.decode(token, config.SECRET_KEY, algorithms=[config.ALGORITHM])
-        user = await user_service.get_by_username(payload.get('sub'))
-        if user is None:
+        username: str = payload.get('sub')
+        if username is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-    return user
+    user = await user_service.get_by_username(username)
+    if user is None:
+        raise credentials_exception
+    return UserSchema(**user.__dict__)
 
 
-@router.post('/token', response_model=Token)
+@router.post('/token', response_model=TokenSchema)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
                                  user_service: UserService = Depends(get_user_service)):
     user = await authenticate_user(user_service, form_data.username, form_data.password)

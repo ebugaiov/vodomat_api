@@ -1,22 +1,22 @@
 from functools import lru_cache
 
 from fastapi import Depends
-from databases import Database
-from sqlalchemy.sql import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from db import get_async_session_server
 
-from db.database import get_database
-from models import user
+from .base import BaseService
+from models import User
 
 
-class UserService:
-    def __init__(self, database: Database):
-        self.database = database
+class UserService(BaseService):
 
-    async def get_by_username(self, username: str):
-        query = select(user).where(user.c.username == username)
-        return await self.database.fetch_one(query=query)
+    async def get_by_username(self, username: str) -> User:
+        query = select(User).where(User.username == username)
+        data = (await self.db_session.execute(query)).scalars().first()
+        return data
 
 
 @lru_cache
-def get_user_service(database: Database = Depends(get_database)) -> UserService:
-    return UserService(database)
+def get_user_service(db_session: AsyncSession = Depends(get_async_session_server)) -> UserService:
+    return UserService(db_session)
