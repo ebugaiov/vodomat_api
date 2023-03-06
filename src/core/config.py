@@ -10,6 +10,13 @@ load_dotenv()
 
 PROJECT_NAME = os.getenv('PROJECT_NAME', 'Vodomat API')
 API_VERSION = os.getenv('API_VERSION', '1.0.0')
+DESCRIPTION = """
+### <span style='color:#0f3057'>System for remote monitoring and control of vending water machine.</span>
+"""
+CONTACT = {
+    'name': 'Evgeniy Bugaiov',
+    'email': 'evgeniy.bugaiov@gmail.com'
+}
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'secret')
 ALGORITHM = 'HS256'

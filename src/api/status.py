@@ -24,6 +24,6 @@ async def read_all_statuses(status_service: StatusService = Depends(get_status_s
 
 @router.get('/{avtomat_number}', response_model=StatusSchema)
 async def read_by_avtomat_number(status_service: StatusService = Depends(get_status_service),
-                                 avtomat_number: int = Path(..., ge=0, le=9999)) -> StatusSchema:
+                                 avtomat_number: int = Path(..., ge=0, le=9999)):
     status = await status_service.get_item_by_avtomat_number(avtomat_number)
     return status
