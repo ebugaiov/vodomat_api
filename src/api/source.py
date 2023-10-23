@@ -4,6 +4,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
+from security import get_current_user
+
 from services import OrderPayGateService, get_order_pay_gate_service
 from services import OrderAppService, get_order_app_service
 from services import OrderServerService, get_order_server_service
@@ -12,7 +14,8 @@ from schemas import OrderServerSourceSchema, OrderAppSourceSchema, OrderPayGateS
 
 router = APIRouter(
     prefix='/source',
-    tags=['source']
+    tags=['source'],
+    dependencies=[Depends(get_current_user), ]
 )
 
 

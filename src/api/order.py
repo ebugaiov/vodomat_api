@@ -4,6 +4,8 @@ from typing import Annotated
 
 from fastapi import Depends, APIRouter, Query
 
+from security import get_current_user
+
 from services import OrderService, get_order_service
 
 from schemas import OrderSchema, OrdersSchema
@@ -11,7 +13,8 @@ from schemas.request_params import OrderByQueryParamOrders, OrderDirectionQueryP
 
 router = APIRouter(
     prefix='/order',
-    tags=['order']
+    tags=['order'],
+    dependencies=[Depends(get_current_user), ]
 )
 
 
