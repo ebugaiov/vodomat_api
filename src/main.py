@@ -39,6 +39,10 @@ app.include_router(api.city_router)
 app.include_router(api.street_router)
 app.include_router(api.avtomat_router)
 app.include_router(api.status_router)
+app.include_router(api.statistic_router)
+app.include_router(api.order_router)
+app.include_router(api.issue_router)
+app.include_router(api.source_order)
 
 app.add_middleware(
     CORSMiddleware,

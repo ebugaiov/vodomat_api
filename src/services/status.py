@@ -5,22 +5,21 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .base import BaseService
-from models import Status
-from models import Avtomat
-
 from db import get_async_session_server
+
+from .base import BaseService
+from models import Status, Avtomat, Street, City, Route
 
 
 class StatusService(BaseService):
 
     async def get_all(self, *args) -> list[Status]:
         order_attribute, order_direction = args
-        select_query = select(Status)\
-            .join(Status.avtomat)\
+        query = select(Status)\
             .options(joinedload(Status.avtomat)
-                     .options(joinedload(Avtomat.route), joinedload(Avtomat.street)))
-        selected_data = (await self.db_session.execute(select_query)).scalars().all()
+                     .options(joinedload(Avtomat.route), joinedload(Avtomat.street)
+                              .options(joinedload(Street.city))))
+        selected_data = (await self.db_session.execute(query)).scalars().all()
         ordered_data = self.get_ordered_data(selected_data, order_attribute, order_direction)
         return ordered_data
 
@@ -28,7 +27,7 @@ class StatusService(BaseService):
         query = select(Status)\
             .options(joinedload(Status.avtomat).options(joinedload(Avtomat.route), joinedload(Avtomat.street)))\
             .where(Status.avtomat_number == avtomat_number)
-        data = (await self.db_session.execute(query)).scalars().first()
+        data = (await self.db_session.execute(query)).scalar()
         if data is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
         return data

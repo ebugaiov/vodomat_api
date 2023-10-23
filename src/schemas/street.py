@@ -6,6 +6,3 @@ class StreetSchema(BaseModel):
     street: str
     city_id: int
     city_name: str
-
-    class Config:
-        orm_mode = True

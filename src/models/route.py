@@ -16,14 +16,3 @@ class Route(Base):
     driver_2 = Column(String(32))
 
     avtomats = relationship('Avtomat', back_populates='route')
-
-
-class RouteSchema(BaseModel):
-    id: int
-    name: str
-    car_number: str
-    driver_1: str
-    driver_2: str
-
-    class Config:
-        orm_mode = True

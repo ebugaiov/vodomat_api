@@ -1,3 +1,5 @@
+from typing import Optional
+
 from sqlalchemy import Column
 from sqlalchemy import Integer, Float, String, Boolean, ForeignKey
 from sqlalchemy.dialects.mysql import TINYINT
@@ -32,19 +34,20 @@ class Avtomat(Base):
     route = relationship('Route', back_populates='avtomats')
     street = relationship('Street', back_populates='avtomats')
     status = relationship('Status', back_populates='avtomat')
+    statistic = relationship('Statistic', back_populates='avtomat')
 
     @hybrid_property
-    def route_name(self):
+    def route_name(self) -> Optional[str]:
         return self.route.name if self.route else None
 
     @hybrid_property
-    def route_car_number(self):
+    def route_car_number(self) -> Optional[str]:
         return self.route.car_number if self.route else None
 
     @hybrid_property
-    def street_name(self):
+    def street_name(self) -> Optional[str]:
         return self.street.street if self.street else None
 
     @hybrid_property
-    def city_name(self):
+    def city_name(self) -> Optional[str]:
         return self.street.city.city if self.street.city else None

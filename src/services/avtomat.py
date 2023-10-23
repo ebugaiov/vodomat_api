@@ -26,7 +26,7 @@ class AvtomatService(BaseService):
         query = select(Avtomat)\
             .options(joinedload(Avtomat.street).options(joinedload(Street.city)), joinedload(Avtomat.route))\
             .where(Avtomat.avtomat_number == avtomat_number)
-        data = (await self.db_session.execute(query)).scalars().first()
+        data = (await self.db_session.execute(query)).scalar()
         if not data:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
         return data

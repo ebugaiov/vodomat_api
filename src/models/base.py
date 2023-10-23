@@ -1,8 +1,6 @@
-from sqlalchemy.orm import declarative_base
-
-_Base = declarative_base()
+from sqlalchemy.orm import DeclarativeBase
 
 
-class Base(_Base):
-    __abstract__ = True
+class Base(DeclarativeBase):
+    pass
 

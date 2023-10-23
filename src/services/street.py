@@ -7,17 +7,16 @@ from sqlalchemy.orm import joinedload
 
 from db import get_async_session_server
 
+from .base import BaseService
 from models import Street
 
 
-class StreetService:
-    def __init__(self, db_session: AsyncSession):
-        self.db_session = db_session
+class StreetService(BaseService):
 
-    async def get_all(self):
+    async def get_all(self) -> list[Street]:
         query = select(Street).options(joinedload(Street.city)).order_by(Street.street)
-        result = await self.db_session.execute(query)
-        return result.scalars().all()
+        streets = (await self.db_session.execute(query)).scalars().all()
+        return streets
 
 
 @lru_cache

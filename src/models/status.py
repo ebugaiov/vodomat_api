@@ -1,3 +1,5 @@
+from typing import Optional
+
 from sqlalchemy import Column
 from sqlalchemy import Integer, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
@@ -35,25 +37,45 @@ class Status(Base):
     avtomat = relationship('Avtomat', back_populates='status')
 
     @hybrid_property
-    def address_house(self):
+    def size(self) -> int:
+        return self.avtomat.size
+
+    @hybrid_property
+    def bill_not_work_hours(self) -> int:
+        return (self.bill_not_work or 0) // 3600
+
+    @hybrid_property
+    def coin_not_work_hours(self) -> int:
+        return (self.coin_not_work or 0) // 3600
+
+    @hybrid_property
+    def bill_not_work_coins(self) -> float:
+        return (self.bill_not_work_money or 0) * 50 / 100
+
+    @hybrid_property
+    def coin_not_work_bills(self) -> int:
+        return self.coin_not_work_money or 0
+
+    @hybrid_property
+    def house(self) -> str:
         return self.avtomat.house
 
     @hybrid_property
-    def address_street(self):
+    def street(self) -> Optional[str]:
         return self.avtomat.street_name
 
     @hybrid_property
-    def address_city(self):
+    def city(self) -> Optional[str]:
         return self.avtomat.city_name
 
     @hybrid_property
-    def address(self):
-        return f'{self.address_street}, {self.address_house}'
-
-    @hybrid_property
-    def route_name(self):
+    def route_name(self) -> Optional[str]:
         return self.avtomat.route_name
 
     @hybrid_property
-    def route_car_number(self):
+    def route_car_number(self) -> Optional[str]:
         return self.avtomat.route_car_number
+
+    @hybrid_property
+    def state(self) -> Optional[str]:
+        return self.avtomat.state

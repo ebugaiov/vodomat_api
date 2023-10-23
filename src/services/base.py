@@ -1,8 +1,11 @@
+from typing import Optional
+
 from sqlalchemy.ext.asyncio import AsyncSession
+from aiohttp import ClientSession
 
 
 class BaseService:
-    def __init__(self, db_session: AsyncSession) -> None:
+    def __init__(self, db_session: Optional[AsyncSession] = None):
         self.db_session = db_session
 
     @staticmethod

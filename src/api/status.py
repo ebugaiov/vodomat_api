@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, Path
 
 from security import get_current_user
 
-from schemas import StatusSchema
-from schemas.request_params import OrderByQueryParam, OrderDirectionQueryParam
+from schemas import StatusSchema, StatusesSchema
+from schemas.request_params import OrderByQueryParamServer, OrderDirectionQueryParam
 from services import StatusService, get_status_service
 
 
@@ -14,12 +14,12 @@ router = APIRouter(
 )
 
 
-@router.get('', response_model=list[StatusSchema])
-async def read_all_statuses(status_service: StatusService = Depends(get_status_service),
-                            order_by: OrderByQueryParam = 'avtomat_number',
-                            order_direction: OrderDirectionQueryParam = 'asc') -> list[StatusSchema]:
+@router.get('', response_model=StatusesSchema)
+async def read_all(status_service: StatusService = Depends(get_status_service),
+                   order_by: OrderByQueryParamServer = 'avtomat_number',
+                   order_direction: OrderDirectionQueryParam = 'asc'):
     statuses = await status_service.get_all(order_by, order_direction)
-    return statuses
+    return {'statuses': statuses}
 
 
 @router.get('/{avtomat_number}', response_model=StatusSchema)

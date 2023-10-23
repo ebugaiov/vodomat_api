@@ -13,6 +13,7 @@ class Permission(str, Enum):
 
 class TokenSchema(BaseModel):
     access_token: str
+    permission: str
     token_type: str
 
 

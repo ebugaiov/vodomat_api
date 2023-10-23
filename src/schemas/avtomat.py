@@ -38,6 +38,3 @@ class AvtomatSchema(BaseModel):
     rro_id: Optional[int]
     security_id: Optional[str]
     security_state: Optional[int]
-
-    class Config:
-        orm_mode = True
