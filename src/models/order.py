@@ -30,8 +30,12 @@ class Order(BaseModel):
     @computed_field
     @property
     def error(self) -> bool:
-        return (self.status_payment_gateway == 'PAYED' and self.status_server != 1) \
-            or (self.money_payment_gateway != self.money_server and self.status_payment_gateway == 'PAYED')
+        return \
+                (self.status_payment_gateway == 'PAYED' and self.status_server != 1
+                 and self.status_purchase not in (1, 3)) \
+                or \
+                (self.status_payment_gateway == 'PAYED' and self.status_server == 1
+                 and self.money_payment_gateway != self.money_server)
 
     @field_validator('*', mode='before')
     @classmethod
