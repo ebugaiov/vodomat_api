@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db import get_async_session_server
 
 from .base import BaseService
-from models import Status, Avtomat, Street, City, Route
+from models import Status, Avtomat, Street
 
 
 class StatusService(BaseService):
@@ -26,7 +26,7 @@ class StatusService(BaseService):
     async def get_item_by_avtomat_number(self, avtomat_number: int) -> Status:
         query = select(Status)\
             .options(joinedload(Status.avtomat).options(joinedload(Avtomat.route), joinedload(Avtomat.street)))\
-            .where(Status.avtomat_number == avtomat_number)
+            .where(Status['avtomat_number'] == avtomat_number)
         data = (await self.db_session.execute(query)).scalar()
         if data is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)

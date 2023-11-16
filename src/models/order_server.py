@@ -34,10 +34,8 @@ class OrderServer(BaseModel):
     order_server_money: Decimal = Field(..., validation_alias='money')
     order_server_status: int = Field(..., validation_alias='status')
     transaction: int
-    price: Optional[int]
-    fail_reason: Optional[int]
+    price: Optional[int] = None
+    fail_reason: Optional[int] = None
 
     class Config:
         from_attributes = True
-
-

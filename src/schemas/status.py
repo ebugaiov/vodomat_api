@@ -1,6 +1,5 @@
 from pydantic import BaseModel, Field
 from typing import Optional
-from datetime import datetime
 
 from .statistic import StatisticSchema
 from .avtomat import Size, State
