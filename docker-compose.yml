@@ -1,10 +1,26 @@
-version: '3.7'
+version: '3'
 services:
-  app:
-    build: .
-    command: uvicorn main:app --proxy-headers --host 0.0.0.0 --port 7000
+  api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
     env_file:
-      - .env
-    image: vodomat_api
-    network_mode: "host"
-    restart: "on-failure"
+      - ./.env
+    restart: always
+    ports:
+      - published: 7000
+        target: 7000
+    networks:
+      - api_network
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    restart: always
+    networks:
+      - api_network
+
+networks:
+  api_network:
+    driver: bridge
