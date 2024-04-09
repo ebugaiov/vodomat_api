@@ -21,14 +21,14 @@ class StatisticService(BaseService):
             .options(joinedload(Statistic.avtomat)
                      .options(joinedload(Avtomat.route), joinedload(Avtomat.street)
                               .options(joinedload(Street.city))))\
-            .filter(Statistic['event'] == 3)\
-            .filter(Statistic['time'].like(f'%{date}%'))
+            .filter(Statistic.event == 3)\
+            .filter(Statistic.time.like(f'%{date}%'))
         selected_data = (await self.db_session.execute(query)).scalars().all()
         ordered_data = self.get_ordered_data(selected_data, order_attribute, order_direction)
         return ordered_data
 
     async def get_all_by_period(self, avtomat_number: int, start_period: str, end_period: str) -> list[Statistic]:
-        query = select(Statistic).where(Statistic['avtomat_number'] == avtomat_number)
+        query = select(Statistic).where(Statistic.avtomat_number == avtomat_number)
         start_period = parse(start_period)
         end_period = parse(end_period)
         if start_period.hour == 0 and start_period.minute == 0 and end_period.hour == 0 and end_period.minute == 0:
@@ -37,7 +37,7 @@ class StatisticService(BaseService):
                 func.date(Statistic.time) <= end_period
             )
         else:
-            query = query.filter(Statistic['time'].between(start_period, end_period))
+            query = query.filter(Statistic.time.between(start_period, end_period))
         selected_data = (await self.db_session.execute(query)).scalars().all()
         ordered_data = self.get_ordered_data(selected_data, 'time', 'desc')
         return ordered_data
