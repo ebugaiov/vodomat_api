@@ -28,8 +28,8 @@ class OrderAppService(BaseService):
         data = (await self.db_session.execute(query)).scalars().all()
         return [OrderApp.model_validate(item) for item in data]
 
-    async def get_item_by_id(self, pk: str) -> OrderApp:
-        return OrderApp.model_validate(await self._get_db_item_by_field(self.model_db_class, 'pk', pk))
+    async def get_item_by_id(self, item_id: str) -> OrderApp:
+        return OrderApp.model_validate(await self._get_db_item_by_field(self.model_db_class, 'id', item_id))
     
     async def update_item(self, field: str, field_value: Any, new_data: dict) -> OrderApp:
         item = await self._get_db_item_by_field(self.model_db_class, field, field_value)
