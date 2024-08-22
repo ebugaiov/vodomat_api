@@ -1,6 +1,7 @@
 from functools import lru_cache
+from typing import Any
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 
 from sqlalchemy import select, and_, func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,6 +14,8 @@ from models import Deposit, OrderServer
 
 class OrderServerService(BaseService):
 
+    model_db_class = Deposit
+
     async def get_all_by_period(self, start_period: str, end_period: str) -> list[OrderServer]:
         query = select(Deposit)\
             .filter(and_(
@@ -23,11 +26,17 @@ class OrderServerService(BaseService):
         return [OrderServer.model_validate(item) for item in data]
 
     async def get_item_by_id(self, pk: int) -> OrderServer:
-        query = select(Deposit).where(Deposit.id == pk)
-        data = (await self.db_session.execute(query)).scalar()
-        if not data:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Server Item not found')
-        return OrderServer.model_validate(data)
+        return OrderServer.model_validate(await self._get_db_item_by_field(self.model_db_class, 'id', pk))
+    
+    async def update_item(self, search_field: str, field_value: Any, new_data: dict) -> OrderServer:
+        item = await self._get_db_item_by_field(self.model_db_class, search_field, field_value)
+        
+        for key, value in new_data.items():
+            setattr(item, key, value)
+
+        await self.db_session.commit()
+
+        return OrderServer.model_validate(item)
 
 
 @lru_cache

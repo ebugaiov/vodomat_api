@@ -49,11 +49,17 @@ class OrderService(BaseService):
         ordered_data = self.get_ordered_data(data, order_attribute, order_direction)
         return ordered_data
 
-    async def get_item_by_id(self, order_pay_gate_id: int):
-        pay_gate_item = await self.order_pay_gate_service.get_item_by_id(order_pay_gate_id)
+    async def get_item_by_id(self, pay_gate_id: int) -> Order:
+        pay_gate_item = await self.order_pay_gate_service.get_item_by_id(pay_gate_id)
         app_item = await self.order_app_service.get_item_by_id(pay_gate_item.order_app_id)
         server_item = await self.order_server_service.get_item_by_id(app_item.order_server_id)
         return Order(**{**dict(pay_gate_item), **dict(app_item), **dict(server_item)})
+    
+    async def update_item_set_done(self, pay_gate_id: int) -> Order:
+        done_server_item = await self.order_server_service.update_item('payment_gateway_id', pay_gate_id, {'status': 1})
+        done_app_item = await self.order_app_service.update_item('payment_gateway_id', pay_gate_id, {'status': 2})
+        pay_gate_item = await self.order_pay_gate_service.get_item_by_id(pay_gate_id)
+        return Order(**{**dict(pay_gate_item), **dict(done_app_item), **dict(done_server_item)})
 
 
 @lru_cache

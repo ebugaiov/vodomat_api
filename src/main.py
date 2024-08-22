@@ -35,14 +35,20 @@ def overridden_redoc():
 
 
 app.include_router(security.router)
+
 app.include_router(api.city_router)
 app.include_router(api.street_router)
 app.include_router(api.avtomat_router)
 app.include_router(api.status_router)
 app.include_router(api.statistic_router)
-app.include_router(api.order_router)
+
 app.include_router(api.issue_router)
-app.include_router(api.source_order)
+
+app.include_router(api.order_router)
+
+app.include_router(api.order_app_router)
+app.include_router(api.order_server_router)
+app.include_router(api.order_portmone_router)
 
 app.add_middleware(
     CORSMiddleware,
