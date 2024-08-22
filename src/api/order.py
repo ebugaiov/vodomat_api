@@ -7,9 +7,6 @@ from fastapi import Depends, APIRouter, Query
 from security import get_current_user
 
 from services import OrderService, get_order_service
-from services import OrderServerService, get_order_server_service
-from services import OrderAppService, get_order_app_service
-from services import OrderPayGateService, get_order_pay_gate_service
 
 from schemas import OrderSchema, OrdersSchema
 from schemas.request_params import OrderByQueryParamOrders, OrderDirectionQueryParam
@@ -17,7 +14,7 @@ from schemas.request_params import OrderByQueryParamOrders, OrderDirectionQueryP
 router = APIRouter(
     prefix='/order',
     tags=['order'],
-    # dependencies=[Depends(get_current_user), ]
+    dependencies=[Depends(get_current_user), ]
 )
 
 
