@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, Path
 
-from security import get_current_user
+from api.v1.security import get_current_user
 
-from schemas import AvtomatSchema
-from services import AvtomatService, get_avtomat_service
+from api.v1.schemas import AvtomatSchema
+from api.v1.services import AvtomatService, get_avtomat_service
 
 
 router = APIRouter(

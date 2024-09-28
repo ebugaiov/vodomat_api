@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db import get_async_session_app
 
 from .base import BaseService
-from models import Issue
+from api.v1.models import Issue
 
 
 class IssueService(BaseService):

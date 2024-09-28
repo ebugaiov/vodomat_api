@@ -6,7 +6,7 @@ from sqlalchemy import select
 from db import get_async_session_server
 
 from .base import BaseService
-from models import User
+from api.v1.models import User
 
 
 class UserService(BaseService):

@@ -11,8 +11,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from core import config
 from core.logger import LOGGING
 
-import security
-import api
+import api.v1.security as security_v1
+from api.v1 import router as router_v1
 
 app = FastAPI(
     title=config.PROJECT_NAME,
@@ -34,21 +34,12 @@ def overridden_redoc():
                           redoc_favicon_url='/static/favicon.ico')
 
 
-app.include_router(security.router)
+# API v1
+app.include_router(security_v1.router)
+app.include_router(router_v1, prefix='/v1')
 
-app.include_router(api.city_router)
-app.include_router(api.street_router)
-app.include_router(api.avtomat_router)
-app.include_router(api.status_router)
-app.include_router(api.statistic_router)
+# API v2
 
-app.include_router(api.issue_router)
-
-app.include_router(api.order_router)
-
-app.include_router(api.order_app_router)
-app.include_router(api.order_server_router)
-app.include_router(api.order_portmone_router)
 
 app.add_middleware(
     CORSMiddleware,

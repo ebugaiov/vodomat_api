@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends
 
-from security import get_current_user
+from api.v1.security import get_current_user
 
-from schemas import StreetSchema
-from services import StreetService, get_street_service
+from api.v1.schemas import StreetSchema
+from api.v1.services import StreetService, get_street_service
 
 
 router = APIRouter(

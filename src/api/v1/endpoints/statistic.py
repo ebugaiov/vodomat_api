@@ -3,11 +3,11 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
-from security import get_current_user
+from api.v1.security import get_current_user
 
-from schemas import CollectionsSchema, StatisticLinesSchema
-from schemas.request_params import OrderByQueryParamServer, OrderDirectionQueryParam
-from services import StatisticService, get_statistic_service
+from api.v1.schemas import CollectionsSchema, StatisticLinesSchema
+from api.v1.schemas.request_params import OrderByQueryParamServer, OrderDirectionQueryParam
+from api.v1.services import StatisticService, get_statistic_service
 
 router = APIRouter(
     prefix='/statistic',

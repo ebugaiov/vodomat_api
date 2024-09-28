@@ -7,12 +7,11 @@ from fastapi import Depends, HTTPException, status
 
 from sqlalchemy import select, text, and_, func
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import NoResultFound
 
 from db import get_async_session_app
 
 from .base import BaseService
-from models import Purchase, OrderApp
+from api.v1.models import Purchase, OrderApp
 
 
 class OrderAppService(BaseService):

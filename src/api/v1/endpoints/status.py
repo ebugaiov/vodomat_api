@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, Path
 
-from security import get_current_user
+from api.v1.security import get_current_user
 
-from schemas import StatusSchema, StatusesSchema
-from schemas.request_params import OrderByQueryParamServer, OrderDirectionQueryParam
-from services import StatusService, get_status_service
+from api.v1.schemas import StatusSchema, StatusesSchema
+from api.v1.schemas.request_params import OrderByQueryParamServer, OrderDirectionQueryParam
+from api.v1.services import StatusService, get_status_service
 
 
 router = APIRouter(

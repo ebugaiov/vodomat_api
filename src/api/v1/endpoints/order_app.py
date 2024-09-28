@@ -4,12 +4,10 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query, Path
 
-from security import get_current_user
+from api.v1.security import get_current_user
 
-from services import OrderAppService, get_order_app_service
-
-from schemas import OrderAppSourceSchema
-from schemas import OrderAppSchema
+from api.v1.services import OrderAppService, get_order_app_service
+from api.v1.schemas import OrderAppSourceSchema, OrderAppSchema
 
 router = APIRouter(
     prefix='/order_app',

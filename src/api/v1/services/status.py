@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db import get_async_session_server
 
 from .base import BaseService
-from models import Status, Avtomat, Street
+from api.v1.models import Status, Avtomat, Street
 
 
 class StatusService(BaseService):

@@ -4,11 +4,10 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query, Path
 
-from security import get_current_user
+from api.v1.security import get_current_user
 
-from services import OrderPayGateService, get_order_pay_gate_service
-
-from schemas import OrderPayGateSourceSchema
+from api.v1.services import OrderPayGateService, get_order_pay_gate_service
+from api.v1.schemas import OrderPayGateSourceSchema
 
 router = APIRouter(
     prefix='/order_portmone',

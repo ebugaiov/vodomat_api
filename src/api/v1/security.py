@@ -8,9 +8,10 @@ from passlib.context import CryptContext
 
 from core import config
 
-from schemas import TokenSchema, UserSchema
-from services import UserService, get_user_service
-from models import User
+from api.v1.models import User
+from api.v1.schemas import TokenSchema, UserSchema
+from api.v1.services import UserService, get_user_service
+
 
 router = APIRouter(prefix='/security', tags=['security'])
 

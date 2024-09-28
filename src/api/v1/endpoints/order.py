@@ -4,12 +4,11 @@ from typing import Annotated
 
 from fastapi import Depends, APIRouter, Query
 
-from security import get_current_user
+from api.v1.security import get_current_user
 
-from services import OrderService, get_order_service
-
-from schemas import OrderSchema, OrdersSchema
-from schemas.request_params import OrderByQueryParamOrders, OrderDirectionQueryParam
+from api.v1.services import OrderService, get_order_service
+from api.v1.schemas import OrderSchema, OrdersSchema
+from api.v1.schemas.request_params import OrderByQueryParamOrders, OrderDirectionQueryParam
 
 router = APIRouter(
     prefix='/order',
