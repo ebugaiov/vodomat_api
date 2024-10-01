@@ -14,3 +14,4 @@ class Issue(Base):
     issue = Column(String(240))
     comment = Column(String(240))
     email = Column(String(64))
+    phone_number = Column(String(15))

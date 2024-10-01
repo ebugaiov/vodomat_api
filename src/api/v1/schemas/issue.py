@@ -12,6 +12,7 @@ class IssueSchema(BaseModel):
     issue: Optional[str] = None
     comment: Optional[str] = None
     email: Optional[str] = None
+    phone_number: Optional[str] = None
 
 
 class IssuesSchema(BaseModel):
