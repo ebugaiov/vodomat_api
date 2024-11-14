@@ -1,10 +1,10 @@
+from uuid import uuid4
 from datetime import datetime
 from typing import Optional
 from decimal import Decimal
 
-from sqlalchemy import Column
-from sqlalchemy import Integer, Float, String, DateTime
-from sqlalchemy.types import SMALLINT
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import CHAR, String
 
 from pydantic import BaseModel, Field
 
@@ -14,14 +14,14 @@ from .base import Base
 class Purchase(Base):
     __tablename__ = 'purchase'
 
-    id = Column(String(36), primary_key=True)
-    created_at = Column(DateTime, index=True)
-    avtomat_number = Column(Integer, index=True)
-    address = Column(String(120), index=True)
-    money = Column(Float)
-    status = Column(SMALLINT)
-    payment_gateway_id = Column(String(20), unique=True, index=True)
-    deposit_id = Column(Integer, unique=True, index=True)
+    id: Mapped[str] = mapped_column(CHAR(36), default=uuid4, primary_key=True)
+    created_at: Mapped[datetime] = mapped_column(default=datetime.now, index=True)
+    avtomat_number: Mapped[int] = mapped_column(index=True)
+    address: Mapped[str] = mapped_column(String(120))
+    money: Mapped[float]
+    status: Mapped[int] = mapped_column(index=True)
+    payment_gateway_id: Mapped[Optional[str]] = mapped_column(String(20), unique=True, index=True)
+    deposit_id: Mapped[Optional[int]] = mapped_column(unique=True, index=True)
 
 
 class OrderApp(BaseModel):
