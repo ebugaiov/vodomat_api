@@ -7,7 +7,7 @@ from sqlalchemy import select
 from db import get_async_session_server
 
 from .base import BaseService
-from api.v1.models import City
+from models import City
 
 
 class CityService(BaseService):

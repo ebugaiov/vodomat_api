@@ -5,7 +5,7 @@ WORKDIR /opt/api
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-COPY src /opt/api
+COPY app /opt/api
 
 EXPOSE 7000
 

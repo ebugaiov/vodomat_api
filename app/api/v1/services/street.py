@@ -8,7 +8,7 @@ from sqlalchemy.orm import joinedload
 from db import get_async_session_server
 
 from .base import BaseService
-from api.v1.models import Street
+from models import Street
 
 
 class StreetService(BaseService):

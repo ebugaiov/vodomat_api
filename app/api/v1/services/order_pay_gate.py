@@ -7,7 +7,7 @@ from fastapi import HTTPException, status
 from core import config
 
 from .base import BaseService
-from api.v1.models import OrderPayGate
+from models import OrderPayGate
 
 
 class OrderPayGateService(BaseService):

@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db import get_async_session_server
 
 from .base import BaseService
-from api.v1.models import Avtomat, Statistic, Street
+from models import Avtomat, Statistic, Street
 
 
 class StatisticService(BaseService):

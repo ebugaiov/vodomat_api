@@ -3,15 +3,15 @@ from typing import Any
 
 import datetime
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 
-from sqlalchemy import select, text, and_, func
+from sqlalchemy import select, and_, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db import get_async_session_app
 
 from .base import BaseService
-from api.v1.models import Purchase, OrderApp
+from models import Purchase, OrderApp
 
 
 class OrderAppService(BaseService):

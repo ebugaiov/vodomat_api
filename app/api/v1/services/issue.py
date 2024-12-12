@@ -3,13 +3,13 @@ from functools import lru_cache
 from typing import Optional
 
 from fastapi import Depends, HTTPException, status
-from sqlalchemy import select, text
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db import get_async_session_app
 
 from .base import BaseService
-from api.v1.models import Issue
+from models import Issue
 
 
 class IssueService(BaseService):

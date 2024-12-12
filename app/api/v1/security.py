@@ -8,7 +8,7 @@ from passlib.context import CryptContext
 
 from core import config
 
-from api.v1.models import User
+from models import User
 from api.v1.schemas import TokenSchema, UserSchema
 from api.v1.services import UserService, get_user_service
 
