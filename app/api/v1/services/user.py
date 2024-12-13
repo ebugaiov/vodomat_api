@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Optional
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,10 +12,15 @@ from models import User
 
 class UserService(BaseService):
 
-    async def get_by_username(self, username: str) -> User:
+    async def get_by_username(self, username: str) -> Optional[User]:
+        """
+        Retrieve a user by their username.
+
+        :param username: The username to filter by.
+        :return: A User object if found, else None.
+        """
         query = select(User).where(User.username == username)
-        data = (await self.db_session.execute(query)).scalars().first()
-        return data
+        return await self.db_session.scalar(query)
 
 
 @lru_cache

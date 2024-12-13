@@ -1,5 +1,4 @@
 from .user import User
-
 from .server import City, Street, Route, Avtomat, Status, Statistic
 from .order_server import Deposit, OrderServer
 
