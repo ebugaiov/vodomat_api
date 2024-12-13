@@ -17,7 +17,7 @@ class State(int, Enum):
 
 
 class AvtomatSchema(BaseModel):
-    avtomat_number: Optional[int]
+    avtomat_number: int
     route_name: Optional[str]
     route_car_number: Optional[str]
     city_name: Optional[str]
@@ -29,8 +29,6 @@ class AvtomatSchema(BaseModel):
     price: Optional[int]
     price_for_app: Optional[int]
     payment_app_url: Optional[str]
-    payment_gateway_name: Optional[str]
-    payment_gateway_url: Optional[str]
     max_sum: Optional[int]
     size: Optional[Size]
     competitors: Optional[bool]

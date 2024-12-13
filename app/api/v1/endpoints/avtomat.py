@@ -14,9 +14,9 @@ router = APIRouter(
 
 
 @router.get('', response_model=list[AvtomatSchema])
-async def read_all_avtomats(avtomat_service: AvtomatService = Depends(get_avtomat_service)) -> list[AvtomatSchema]:
+async def read_all_avtomats(avtomat_service: AvtomatService = Depends(get_avtomat_service)):
     avtomats = await avtomat_service.get_all()
-    return avtomats
+    return [avtomat.model_validate]
 
 
 @router.get('/{avtomat_number}', response_model=AvtomatSchema)

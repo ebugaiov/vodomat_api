@@ -1,11 +1,6 @@
 from .user import User
 
-from .route import Route
-from .city import City
-from .street import Street
-from .avtomat import Avtomat
-from .status import Status
-from .statistic import Statistic
+from .server import City, Street, Route, Avtomat, Status, Statistic
 from .order_server import Deposit, OrderServer
 
 from .issue import Issue
