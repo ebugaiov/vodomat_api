@@ -178,8 +178,16 @@ class Status(BaseStatusLine):
     def state(self):
         return self.avtomat.state
 
+    def __repr__(self):
+        has_error = any((self.low_water_balance, self.error_bill, self.error_volt,
+                         self.error_register, self.error_counter,))
+        return f'Status({self.avtomat_number}, {"Error" if has_error else "No Error"})'
+
 
 class Statistic(BaseStatusLine):
     __tablename__ = 'statistic'
 
     avtomat: Mapped[Avtomat] = relationship(back_populates='statistic')
+
+    def __repr__(self):
+        return f'Statistic({self.avtomat_number})'
