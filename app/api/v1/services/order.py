@@ -34,18 +34,34 @@ class OrderService(BaseService):
 
     async def get_all_by_period(self, start_period: str, end_period: str,
                                 order_attribute: str, order_direction: str) -> list[Order]:
-        order_pay_gate_df = pd.DataFrame(item.model_dump() for item in
-                                         (await self.order_pay_gate_service.get_all_by_period(start_period,
-                                                                                              end_period)))
-        order_server_df = pd.DataFrame(item.model_dump() for item in
-                                       (await self.order_server_service.get_all_by_period(start_period, end_period)))
-        order_app_df = pd.DataFrame(item.model_dump() for item in
-                                    (await self.order_app_service.get_all_by_period(start_period, end_period)))
-        merged_df = order_pay_gate_df \
-            .merge(order_server_df, on='order_pay_gate_id', how='left', suffixes=('', '_')) \
-            .merge(order_app_df, on='order_app_id', how='left', suffixes=('', '_'))
+        # Fetch data and validate
+        pay_gate_data = await self.order_pay_gate_service.get_all_by_period(start_period, end_period)
+        server_data = await self.order_server_service.get_all_by_period(start_period, end_period)
+        app_data = await self.order_app_service.get_all_by_period(start_period, end_period)
+
+        # Convert to DataFrame
+        order_pay_gate_df = pd.DataFrame(item.model_dump() for item in pay_gate_data)
+        order_server_df = pd.DataFrame(item.model_dump() for item in server_data)
+        order_app_df = pd.DataFrame(item.model_dump() for item in app_data)
+
+        # Merge DataFrames
+        try:
+            merged_df = order_pay_gate_df \
+                .merge(order_server_df, on='order_pay_gate_id', how='left', suffixes=('', '_server')) \
+                .merge(order_app_df, on='order_app_id', how='left', suffixes=('', '_app'))
+        except KeyError as e:
+            raise ValueError(f"Merge error: {e}")
+
+        # Handle missing data
         await self._fill_empty_order_app_fields(merged_df)
-        data = [Order(**item) for item in merged_df.to_dict(orient='records')]
+
+        # Convert to list of `Order`
+        try:
+            data = [Order(**item) for item in merged_df.to_dict(orient='records')]
+        except Exception as e:
+            raise ValueError(f"Error converting DataFrame to Order objects: {e}")
+
+        # Sort data
         ordered_data = self.get_ordered_data(data, order_attribute, order_direction)
         return ordered_data
 
