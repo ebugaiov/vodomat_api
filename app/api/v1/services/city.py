@@ -14,7 +14,7 @@ class CityService(BaseService):
 
     async def get_all(self) -> list[City]:
         query = select(City).order_by(City.city)
-        cities = (await self.db_session.execute(query)).scalars().all()
+        cities = (await self.db_session.scalars(query)).all()
         return cities
 
 

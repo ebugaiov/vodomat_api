@@ -15,7 +15,7 @@ class StreetService(BaseService):
 
     async def get_all(self) -> list[Street]:
         query = select(Street).options(joinedload(Street.city)).order_by(Street.street)
-        streets = (await self.db_session.execute(query)).scalars().all()
+        streets = (await self.db_session.scalars(query)).all()
         return streets
 
 
