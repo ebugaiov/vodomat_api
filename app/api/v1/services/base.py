@@ -16,8 +16,10 @@ class BaseService:
             query = select(model_class).where(getattr(model_class, field) == value)
             item = (await self.db_session.execute(query)).scalar_one()
         except NoResultFound:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Server Item not found')
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                detail=f'{model_class.__name__} Item with {field} == {value} not found')
         return item
+
 
     @staticmethod
     def get_ordered_data(data: Sequence, order_attribute: str, order_direction: str) -> Sequence:
