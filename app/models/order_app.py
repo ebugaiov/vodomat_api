@@ -2,6 +2,7 @@ from uuid import uuid4
 from datetime import datetime
 from typing import Optional
 from decimal import Decimal
+from enum import IntEnum
 
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import CHAR, String
@@ -9,6 +10,17 @@ from sqlalchemy import CHAR, String
 from pydantic import BaseModel, Field
 
 from .base import Base
+
+
+class PurchaseStatus(IntEnum):
+    CREATED = 0
+    IN_PROGRESS = 1
+    SUCCESS = 2
+    REFUND = 3
+    FAIL_BY_PAYMENT_GATEWAY = 4
+    FAIL_AND_NOT_REFUND = 5
+    FAIL_BY_SERVER = 6  # vodomat_service has not gotten deposit_id from the server
+    FAIL_BY_AVTOMAT = 7  # deposit was created on server but failed by avtomat
 
 
 class Purchase(Base):
@@ -29,7 +41,7 @@ class OrderApp(BaseModel):
     order_pay_gate_id: Optional[int] = Field(None, validation_alias='payment_gateway_id')
     order_server_id: Optional[int] = Field(None, validation_alias='deposit_id')
     created_at: datetime
-    order_app_money: Decimal = Field(..., validation_alias='money')
+    order_app_money: float = Field(..., validation_alias='money')
     order_app_status: int = Field(..., validation_alias='status')
     avtomat_number: int
     address: str

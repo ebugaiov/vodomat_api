@@ -92,10 +92,10 @@ class OrderPayGateService(BaseService):
 
         return OrderPayGate.model_validate(response_data[0])
 
-    async def refund(self, shop_bill_id: str,
-                     amount: float,
-                     method: str = 'return',
-                     message: Optional[str] = None) -> bool:
+    async def refund_item(self, pk: int,
+                          amount: float,
+                          method: str = 'return',
+                          message: Optional[str] = None) -> OrderPayGate:
         """
         Process a refund based on the provided method type.
         There are two types of refunds:
@@ -103,22 +103,27 @@ class OrderPayGateService(BaseService):
         2. return: This refund type is slower but can be processed at any time after the payment.
 
         Args:
-            shop_bill_id (str): The ID of the shop bill to refund.
+            pk (int): The ID of the pay gate order to refund.
             amount (float): The amount to refund.
             method (str): The refund method ('return' or 'reject'). Defaults to 'return'.
             message (Optional[str]): An optional message for the refund.
 
         Returns:
-            bool: True if the refund is successful, False otherwise.
+            OrderPayGate: The details of the processed refund.
         """
         message = f'Returned at {datetime.now()}' if message is None else message
         data = {
-            'shopbillId': shop_bill_id,
+            'shopbillId': pk,
             'returnAmount': amount,
             'message': message
         }
         response_data = await self._post_to_gateway(method, data)
-        return response_data[0].get('status') in ('RETURN', 'REJECTED')
+        if response_data[0].get('status') not in ('RETURN', 'REJECTED'):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail='Refund failed by Portmone Service'
+            )
+        return OrderPayGate.model_validate(response_data[0])
 
 
 @lru_cache

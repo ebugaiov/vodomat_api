@@ -26,7 +26,8 @@ class OrderServerService(BaseService):
         return [OrderServer.model_validate(item) for item in data]
 
     async def get_item_by_id(self, pk: int) -> OrderServer:
-        return OrderServer.model_validate(await self._get_db_item_by_field(self.model_db_class, 'id', pk))
+        item = await self._get_db_item_by_field(self.model_db_class, 'id', pk)
+        return OrderServer.model_validate(item)
     
     async def update_item(self, search_field: str, field_value: Any, new_data: dict) -> OrderServer:
         item = await self._get_db_item_by_field(self.model_db_class, search_field, field_value)

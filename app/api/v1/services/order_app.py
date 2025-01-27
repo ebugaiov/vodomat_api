@@ -29,9 +29,14 @@ class OrderAppService(BaseService):
 
     async def get_item_by_id(self, item_id: str) -> OrderApp:
         return OrderApp.model_validate(await self._get_db_item_by_field(self.model_db_class, 'id', item_id))
+
+    async def get_item_by_pay_gate_id(self, pay_gate_id: int) -> OrderApp:
+        return OrderApp.model_validate(
+            await self._get_db_item_by_field(self.model_db_class, 'payment_gateway_id', pay_gate_id)
+        )
     
-    async def update_item(self, field: str, field_value: Any, new_data: dict) -> OrderApp:
-        item = await self._get_db_item_by_field(self.model_db_class, field, field_value)
+    async def update_item(self, search_field: str, field_value: Any, new_data: dict) -> OrderApp:
+        item = await self._get_db_item_by_field(self.model_db_class, search_field, field_value)
         
         for key, value in new_data.items():
             setattr(item, key, value)

@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
 from decimal import Decimal
+from enum import IntEnum
 
 from sqlalchemy import Column
 from sqlalchemy import Integer, Float, String, DateTime
@@ -9,6 +10,12 @@ from sqlalchemy.dialects.mysql import TINYINT
 from pydantic import BaseModel, Field
 
 from .base import Base
+
+
+class DepositStatus(IntEnum):
+    CREATED = 0
+    DONE = 1
+    FAILED = 2
 
 
 class Deposit(Base):

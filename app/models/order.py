@@ -12,7 +12,7 @@ class Order(BaseModel):
     id_purchase: str = Field(..., validation_alias='order_app_id')
     id_server: Optional[int] = Field(None, validation_alias='order_server_id')
     created_at: datetime
-    time_payment_gateway: datetime = Field(..., validation_alias='order_pay_gate_time')
+    time_payment_gateway: Optional[datetime] = Field(None, validation_alias='order_pay_gate_time')
     time_server: Optional[datetime] = Field(None, validation_alias='order_server_time')
     status_purchase: int = Field(..., validation_alias='order_app_status')
     status_payment_gateway: str = Field(..., validation_alias='order_pay_gate_status')

@@ -1,8 +1,8 @@
 from functools import lru_cache
-
-from fastapi import Depends
-
+from datetime import date, datetime
+from fastapi import Depends, HTTPException
 import pandas as pd
+from typing import Optional
 
 from .base import BaseService
 
@@ -10,7 +10,7 @@ from .order_pay_gate import OrderPayGateService, get_order_pay_gate_service
 from .order_app import OrderAppService, get_order_app_service
 from .order_server import OrderServerService, get_order_server_service
 
-from models import Order
+from models import Order, PurchaseStatus, DepositStatus
 
 
 class OrderService(BaseService):
@@ -76,6 +76,52 @@ class OrderService(BaseService):
         done_app_item = await self.order_app_service.update_item('payment_gateway_id', pay_gate_id, {'status': 2})
         pay_gate_item = await self.order_pay_gate_service.get_item_by_id(pay_gate_id)
         return Order(**{**dict(pay_gate_item), **dict(done_app_item), **dict(done_server_item)})
+
+    async def refund_item(self, pay_gate_id: int) -> Optional[Order]:
+        """
+        Process a refund for the given payment gateway ID and return the consolidated Order object.
+
+        Args:
+            pay_gate_id (str): The payment gateway ID to refund.
+
+        Returns:
+            Optional[Order]: A consolidated Order object on success, or None if the refund fails.
+        """
+        app_order = await self.order_app_service.get_item_by_pay_gate_id(pay_gate_id)
+        refund_method = 'reject' if app_order.created_at.date() == date.today() else 'return'
+        message = f'{pay_gate_id} Returned manually at {datetime.now()}'
+
+        try:
+            # Check, that Purchase could be refunded according to its status.
+            if app_order.order_app_status not in (PurchaseStatus.CREATED, PurchaseStatus.FAIL_AND_NOT_REFUND):
+                raise HTTPException(status_code=400,
+                                    detail=f'Purchase({app_order.order_app_id}) with this status cannot be refunded.'
+                                    )
+            # Process the refund in the payment gateway. Raise an HTTPException if the order was not refunded.
+            pay_gate_order = await self.order_pay_gate_service.refund_item(
+                pay_gate_id,
+                app_order.order_app_money,
+                refund_method,
+                message,
+            )
+
+            # Update related purchase and deposit on successful refund.
+            app_order = await self.order_app_service.update_item(
+                'payment_gateway_id', pay_gate_id, {'status': PurchaseStatus.REFUND}
+            )
+            server_order = await self.order_server_service.update_item(
+                'payment_gateway_id', pay_gate_id, {'status': DepositStatus.FAILED}
+            )
+
+            return Order(**{**dict(pay_gate_order), **dict(app_order), **dict(server_order)})
+
+        except HTTPException as e:
+            # Handle refund failure by updating the purchase status.
+            if e.status_code == 400:
+                await self.order_app_service.update_item(
+                    'payment_gateway_id', pay_gate_id, {'status': PurchaseStatus.FAIL_AND_NOT_REFUND}
+                )
+            return None
 
 
 @lru_cache
