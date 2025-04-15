@@ -62,6 +62,7 @@ class Avtomat(Model):
     search_radius: Mapped[int]
     price: Mapped[int]
     price_for_app: Mapped[int]
+    visible_in_app: Mapped[bool]
     max_sum: Mapped[int]
     size: Mapped[int]
     competitors: Mapped[bool]
@@ -177,6 +178,10 @@ class Status(BaseStatusLine):
     @hybrid_property
     def state(self):
         return self.avtomat.state
+
+    @hybrid_property
+    def visible_in_app(self):
+        return self.avtomat.visible_in_app
 
     def __repr__(self):
         has_error = any((self.low_water_balance, self.error_bill, self.error_volt,

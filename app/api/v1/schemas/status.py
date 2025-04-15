@@ -13,6 +13,7 @@ class StatusSchema(StatisticSchema):
     route_car_number: Optional[str] = Field(None, examples=['52-81', ])
     size: Optional[Size] = None
     state: Optional[State] = None
+    visible_in_app: Optional[bool] = None
 
 
 class StatusesSchema(BaseModel):
