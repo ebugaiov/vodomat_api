@@ -14,6 +14,7 @@ class State(int, Enum):
     NORMAL = 1
     NO_VOLT = 2
     CRASHED = 3
+    LIMIT = 4
 
 
 class AvtomatSchema(BaseModel):
